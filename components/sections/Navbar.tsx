@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { Button } from '@/components/ui/button'; 
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,14 +33,9 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            {/* <button className="px-6 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors">
+            <button className="px-6 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors">
               Get Started
-            </button> */}
-            <Button asChild>
-              <Link href="/contact">
-                  Contact
-               </Link>
-            </Button>
+            </button>
             <ModeToggle />
           </div>
 
@@ -68,14 +62,9 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            {/* <button className="w-full mt-4 px-6 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors">
+            <button className="w-full mt-4 px-6 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors">
               Get Started
-            </button> */}
-            <Button asChild className="w-full mt-4">
-                <Link href="/contact">
-                Contact
-                </Link>
-                </Button>
+            </button>
             <div className="mt-4 flex justify-center">
               <ModeToggle />
             </div>
