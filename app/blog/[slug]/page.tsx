@@ -1,55 +1,80 @@
-import { getPostBySlug } from '@/lib/mdx';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Navbar from '@/components/sections/Navbar';
-import Footer from '@/components/sections/Footer';
+import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { notFound } from 'next/navigation';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import { getPostBySlug, getPostSlugs } from '@/lib/mdx';
+import { formatDate } from '@/lib/utils';
+import { ChevronLeft } from 'lucide-react';
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug, 'blog');
+interface BlogPostPageProps {
+  params: {
+    slug: string;
+  };
+}
 
-  if (!post) {
-    notFound();
-  }
+export async function generateStaticParams() {
+  const slugs = getPostSlugs('content/blog');
+  return slugs.map((slug) => ({
+    slug,
+  }));
+}
+
+export async function generateMetadata({ params }: BlogPostPageProps) {
+  const post = getPostBySlug(params.slug, 'content/blog');
+  return {
+    title: post.metadata.title,
+    description: post.metadata.description,
+  };
+}
+
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const post = getPostBySlug(params.slug, 'content/blog');
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors">
-      <Navbar />
-      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-        <Link 
-          href="/blog" 
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Blog
-        </Link>
-        
-        <article>
+    <div className="min-h-screen bg-white pt-24">
+      <article className="w-full">
+        {post.metadata.coverImage && (
+          <div className="relative h-96 w-full overflow-hidden bg-neutral-200">
+            <Image
+              src={post.metadata.coverImage}
+              alt={post.metadata.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
+
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-sm text-neutral-600 hover:text-neutral-900 transition-colors mb-8"
+          >
+            <ChevronLeft className="w-4 h-4 mr-2" />
+            Back to Blog
+          </Link>
+
           <header className="mb-10">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 text-foreground">
-              {post.meta.title}
+            <h1 className="text-4xl md:text-5xl font-serif font-bold text-neutral-900 mb-4">
+              {post.metadata.title}
             </h1>
-            <div className="flex items-center gap-4 text-muted-foreground text-sm">
-              <time>{post.meta.date}</time>
-              <span>•</span>
-              <span>{post.meta.category || 'General'}</span>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-neutral-600">
+              <time dateTime={post.metadata.date}>
+                {formatDate(post.metadata.date)}
+              </time>
+              {post.metadata.author && (
+                <>
+                  <span>•</span>
+                  <span>By {post.metadata.author}</span>
+                </>
+              )}
             </div>
           </header>
 
-          {/* CRITICAL FIX: 
-            'prose' styles the markdown. 
-            'dark:prose-invert' flips the text color to white in dark mode.
-          */}
-          <div className="prose prose-neutral dark:prose-invert max-w-none 
-            prose-headings:font-serif prose-headings:font-bold
-            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-            prose-img:rounded-lg prose-img:shadow-md">
+          <div className="prose prose-lg max-w-none prose-neutral">
             <MDXRemote source={post.content} />
           </div>
-        </article>
-      </main>
-      <Footer />
+        </div>
+      </article>
     </div>
   );
 }
