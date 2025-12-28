@@ -1,72 +1,62 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getAllPosts } from '@/lib/mdx';
-import { formatDate } from '@/lib/utils';
-import { ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Navbar from '@/components/sections/Navbar';
+import Footer from '@/components/sections/Footer';
+import FadeIn from '@/components/ui/fade-in';
+import { Badge } from '@/components/ui/badge';
 
 export const metadata = {
-  title: 'Blog',
-  description: 'Read our latest articles and insights',
+  title: 'Blog - Apex Portfolio',
+  description: 'Thoughts, ideas, and guides on software development.',
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts('content/blog');
+export default async function BlogPage() {
+  const posts = await getAllPosts('blog');
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-white pt-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-16">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-neutral-900 mb-4">
-            Blog
-          </h1>
-          <p className="text-xl text-neutral-600">
-            Insights, tutorials, and stories from our team
-          </p>
-        </div>
+    <div className="min-h-screen bg-background text-foreground transition-colors">
+      <Navbar />
+      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <FadeIn>
+          <div className="max-w-2xl mx-auto text-center mb-16">
+            <h1 className="text-4xl font-serif font-bold mb-4">The Blog</h1>
+            <p className="text-muted-foreground text-lg">
+              Insights, tutorials, and updates from my journey.
+            </p>
+          </div>
+        </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-20">
-          {posts.map((post) => (
-            <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
-              <Card className="h-full overflow-hidden hover:border-neutral-400 transition-all duration-300 hover:shadow-lg">
-                {post.metadata.coverImage && (
-                  <div className="relative h-48 w-full overflow-hidden bg-neutral-200">
-                    <Image
-                      src={post.metadata.coverImage}
-                      alt={post.metadata.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-4 mb-2">
-                    <CardTitle className="text-xl group-hover:text-neutral-600 transition-colors">
-                      {post.metadata.title}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post: any, index: number) => (
+            <FadeIn key={post.meta.slug} delay={index * 0.1}>
+              <Link href={`/blog/${post.meta.slug}`}>
+                <Card className="h-full hover:shadow-lg transition-all hover:-translate-y-1 bg-card dark:bg-neutral-900 border-border">
+                  <CardHeader>
+                    <div className="flex justify-between items-start mb-2">
+                      <Badge variant="secondary" className="mb-2">
+                        {post.meta.category || 'Article'}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {post.meta.date}
+                      </span>
+                    </div>
+                    <CardTitle className="font-serif text-xl leading-tight">
+                      {post.meta.title}
                     </CardTitle>
-                    <ArrowRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 transition-colors flex-shrink-0 mt-1" />
-                  </div>
-                  <CardDescription className="text-sm">
-                    {formatDate(post.metadata.date)}
-                    {post.metadata.author && ` • By ${post.metadata.author}`}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-neutral-600 line-clamp-2">
-                    {post.metadata.description}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm line-clamp-3">
+                      {post.meta.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            </FadeIn>
           ))}
         </div>
-
-        {posts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-lg text-neutral-600">No blog posts yet.</p>
-          </div>
-        )}
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }
