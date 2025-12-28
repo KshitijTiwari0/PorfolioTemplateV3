@@ -4,15 +4,16 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { ModeToggle } from '@/components/ui/mode-toggle';
+import { Button } from '@/components/ui/button';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { href: '#home', label: 'Home' },
-    { href: '#services', label: 'Services' },
-    { href: '#about', label: 'About' },
-    { href: '#contact', label: 'Contact' },
+    { href: '/', label: 'Home' },
+    { href: '/projects', label: 'Work' },
+    { href: '/about', label: 'About' },
+    { href: '/blog', label: 'Blog' },
   ];
 
   return (
@@ -23,6 +24,7 @@ export default function Navbar() {
             <span className="text-2xl font-serif font-bold text-neutral-900 dark:text-white">Apex</span>
           </Link>
 
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <Link
@@ -33,12 +35,17 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <button className="px-6 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors">
-              Get Started
-            </button>
+            
+            <Button asChild>
+              <Link href="/contact">
+                Contact Me
+              </Link>
+            </Button>
+            
             <ModeToggle />
           </div>
 
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-md text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
@@ -49,6 +56,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="md:hidden border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 transition-colors">
           <div className="px-4 pt-2 pb-4 space-y-1">
@@ -62,9 +70,13 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <button className="w-full mt-4 px-6 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors">
-              Get Started
-            </button>
+            
+            <Button asChild className="w-full mt-4">
+              <Link href="/contact" onClick={() => setIsOpen(false)}>
+                Contact Me
+              </Link>
+            </Button>
+            
             <div className="mt-4 flex justify-center">
               <ModeToggle />
             </div>
